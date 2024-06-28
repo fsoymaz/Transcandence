@@ -1,0 +1,34 @@
+import { loadPage } from './pageLoader.js';
+import { logout } from './auth.js';
+
+export function setupNavLinks() {
+    document.getElementById('home-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        loadPage('index', true);
+    });
+
+    document.getElementById('register-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        loadPage('register', true);
+    });
+
+    document.getElementById('login-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        loadPage('login', true);
+    });
+
+    document.getElementById('game-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        if (localStorage.getItem('jwt')) {
+            loadPage('game', true);
+        } else {
+            alert('Please log in to access the game.');
+            loadPage('login', true);
+        }
+    });
+
+    document.getElementById('logout-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        logout();
+    });
+}
