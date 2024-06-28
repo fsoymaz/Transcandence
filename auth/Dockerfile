@@ -21,6 +21,7 @@ COPY . .
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
+
 # Expose port
 EXPOSE 8000
 

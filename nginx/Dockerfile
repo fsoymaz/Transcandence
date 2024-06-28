@@ -1,13 +1,11 @@
+# nginx
 FROM nginx:alpine
 
-# OpenSSL'i yükleyin
-RUN apk add --no-cache openssl
+# Install Certbot
+RUN apk add --no-cache certbot certbot-nginx
 
-# Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy Nginx configuration file
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Expose ports
-EXPOSE 80 443
-
-# Nginx başlatma komutu
-CMD ["nginx", "-g", "daemon off;"]
+# Start Nginx with SSL setup
+CMD ["sh", "-c", "certbot certonly --standalone -d fsoymaz.tech --non-interactive --agree-tos -m fthsymz60@gmail.com && nginx -g 'daemon off;'"]

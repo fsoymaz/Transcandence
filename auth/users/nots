@@ -1,0 +1,2 @@
+docker volume rm transcandenseson_postgres_data
+docker volume create transcandenseson_postgres_data

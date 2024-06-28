@@ -20,5 +20,6 @@ from users.views import home  # Home view'i import ediyoruz
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('users.urls')),
-    path('', home),  # Kök URL için yol ekliyoruz
+    path('', home),  # Kök URL için home view'ini ekliyoruz
 ]
+

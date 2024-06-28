@@ -1,9 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ ! -f /etc/ssl/certs/nginx.crt ]; then
-    echo "Nginx: setting up ssl ...";
-    openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout /etc/ssl/private/nginx.key -out /etc/ssl/certs/nginx.crt -subj "/C=TR/ST=ISTANBUL/L=SARIYER/O=42Istanbul/CN=fsoymaz.42.fr";
-    echo "Nginx: ssl is set up!";
+# Create SSL certificates if they don't exist
+if [ ! -f /etc/letsencrypt/live/fsoymaz.tech/fullchain.pem ]; then
+    echo "Nginx: Let's Encrypt SSL certificates are being created..."
+    certbot certonly --nginx --non-interactive --agree-tos --email fthsymz60@gmail.com --domain fsoymaz.tech
+    echo "Nginx: Let's Encrypt SSL certificates created!"
 fi
 
-exec "$@"
+# Start Nginx
+echo "Nginx: Starting..."
+nginx -g "daemon off;"

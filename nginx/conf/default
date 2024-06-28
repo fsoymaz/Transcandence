@@ -19,6 +19,9 @@ http {
         ssl_certificate /etc/letsencrypt/live/fsoymaz.tech/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/fsoymaz.tech/privkey.pem;
 
+        root /var/www/html;
+        index index.html;
+
         location / {
             proxy_pass http://front:80;
             proxy_redirect off;
