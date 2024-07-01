@@ -12,13 +12,13 @@ export function loadPage(page, updateHistory) {
         return;
     }
 
-    const pageExists = ['index', 'register', 'login', 'game'].includes(page);
+    const pageExists = ['index', 'register', 'login', 'game', 'home'].includes(page);
     if (!pageExists) {
         console.error('Page not found');
         content.innerHTML = '<h1>Page not found</h1>';
         return;
     }
-	console.log("page: " + page);
+
     content.innerHTML = '';
     fetch(`pages/${page}.html`)
         .then(response => {
@@ -47,5 +47,7 @@ function setupDynamicContent(page) {
         import('./auth.js').then(module => module.setupRegisterForm());
     } else if (page === 'game') {
         import('./game.js').then(module => module.setupGame());
+    } else if (page === 'home') {
+        import('./home.js').then(module => module.setupHome());
     }
 }

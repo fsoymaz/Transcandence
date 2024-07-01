@@ -6,7 +6,6 @@ export function setupLoginForm() {
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-
         fetch('https://fsoymaz.tech/api/login/', {
             method: 'POST',
             headers: {
@@ -20,9 +19,11 @@ export function setupLoginForm() {
         .then(response => response.json())
         .then(data => {
             if (data.token) {
+                console.log('JWT Token:', data.token); // Add this line to log the token
                 localStorage.setItem('jwt', data.token);
                 const decodedJWT = parseJWT(data.token);
-                loadPage('index', true);
+                console.log('Decoded JWT:', decodedJWT); // Log the decoded JWT
+                loadPage('game', true);
             } else {
                 console.error('JWT not found in response');
             }
@@ -91,7 +92,8 @@ function base64UrlDecode(base64Url) {
     return atob(base64);
 }
 
-function parseJWT(token) {
+export function parseJWT(token) {
+    console.log("parseJWT token: " + token);
     const parts = token.split('.');
     if (parts.length !== 3) {
         throw new Error('Invalid JWT token');
@@ -103,5 +105,7 @@ function parseJWT(token) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
 
-    return JSON.parse(jsonPayload);
+    const parsedPayload = JSON.parse(jsonPayload);
+    console.log('Parsed JWT Payload:', parsedPayload); // Add this line to log the parsed payload
+    return parsedPayload;
 }

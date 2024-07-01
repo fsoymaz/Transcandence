@@ -1,20 +1,20 @@
-all:
-	@mkdir -p $(HOME)/fsoymaz/data/wordpress
-	@mkdir -p $(HOME)/fsoymaz/data/mariadb
-	@docker-compose -f ./srcs/docker-compose.yml up -d
-
+up:
+	@docker-compose up -d --build
+db:
+	docker-compose up -d db
 down:
-	@docker-compose -f ./srcs/docker-compose.yml down
+	@docker-compose -f docker-compose.yml down
 
-re:
-	@docker-compose -f srcs/docker-compose.yml up --build
 
-clean:
-	@docker stop $$(docker ps -qa);\
-	docker rm $$(docker ps -qa);\
-	docker rmi -f $$(docker images -qa);\
-	docker volume rm $$(docker volume ls -q);\
-	docker network rm $$(docker network ls -q);\
+clean:down
+	@docker system prune -a -f
+	docker volume prune -f
+	docker network prune -f
+
+re:clean up
+
+c_vol:
+	docker volume rm db transcandence_postgres_data
 
 
 .PHONY: all re down clean

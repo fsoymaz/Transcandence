@@ -4,7 +4,7 @@ import { logout } from './auth.js';
 export function setupNavLinks() {
     document.getElementById('home-link').addEventListener('click', function(event) {
         event.preventDefault();
-        loadPage('index', true);
+        loadPage('home', true);
     });
 
     document.getElementById('register-link').addEventListener('click', function(event) {
@@ -29,6 +29,8 @@ export function setupNavLinks() {
 
     document.getElementById('logout-link').addEventListener('click', function(event) {
         event.preventDefault();
-        logout();
+        logout().then(() => {
+            loadPage('home', true);
+        });
     });
 }

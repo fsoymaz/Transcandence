@@ -7,11 +7,11 @@
 	font-family: 'Quicksand', sans-serif;
 }
 
-body {
+/*body {
 	display: flex;
 	min-height: 100vh;
 	background: #000;
-}
+}*/
 
 section {
 	position: absolute;
@@ -173,12 +173,7 @@ section .canvas {
 	box-shadow: 0 15px 35px rgba(0, 0, 0, 9);
 }
 
-section .register {
-	position: absolute;
-	width: 1200px;
-	z-index: 1000;
-	background-color: #000;
-}
+
 
 
 @media (max-width: 900px) {
