@@ -1,8 +1,34 @@
+// pageLoader.js
+
 export function getPageFromURL() {
     const hash = window.location.hash;
-    return hash === '#' ? 'index' : hash.slice(1);
+    const defaultPage = 'home'; // Varsayılan olarak yönlendirilecek sayfa
+
+    if (hash === '' || hash === '#') {
+        window.location.href = `#${defaultPage}`; // Sayfa yüklendiğinde varsayılan sayfaya yönlendirme
+        return defaultPage;
+    } else {
+        return hash.slice(1);
+    }
 }
 
+function setupDynamicContent(page) {
+    if (page === 'login') {
+        import('./auth.js').then(module => module.setupLoginForm());
+    } else if (page === 'register') {
+        import('./auth.js').then(module => module.setupRegisterForm());
+    } else if (page === 'game') {
+        import('./game.js').then(module => module.setupGame());
+    } else if (page === 'home') {
+        import('./home.js').then(module => module.setupHome());
+    } else if (page === 'chat') {
+        import('./chat.js').then(module => module.setupChat());
+    } else if (page === 'chat_room') {
+        import('./chat_room.js').then(module => module.setupChatRoom());
+    }
+}
+
+// pageLoader.js dosyasındaki loadPage fonksiyonunu kullanarak chat_room.html içeriğini yükleyelim
 export function loadPage(page, updateHistory) {
     const content = document.getElementById('content');
 
@@ -12,7 +38,7 @@ export function loadPage(page, updateHistory) {
         return;
     }
 
-    const pageExists = ['index', 'register', 'login', 'game', 'home'].includes(page);
+    const pageExists = ['index', 'register', 'login', 'game', 'home', 'chat', 'chat_room'].includes(page);
     if (!pageExists) {
         console.error('Page not found');
         content.innerHTML = '<h1>Page not found</h1>';
@@ -38,16 +64,4 @@ export function loadPage(page, updateHistory) {
             console.error("Error:", error);
             content.innerHTML = '<h1>Page not found</h1>';
         });
-}
-
-function setupDynamicContent(page) {
-    if (page === 'login') {
-        import('./auth.js').then(module => module.setupLoginForm());
-    } else if (page === 'register') {
-        import('./auth.js').then(module => module.setupRegisterForm());
-    } else if (page === 'game') {
-        import('./game.js').then(module => module.setupGame());
-    } else if (page === 'home') {
-        import('./home.js').then(module => module.setupHome());
-    }
 }

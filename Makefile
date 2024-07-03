@@ -1,9 +1,8 @@
 up:
-	@docker-compose up -d --build
-db:
-	docker-compose up -d db
+	@docker compose up -d --build
+
 down:
-	@docker-compose -f docker-compose.yml down
+	@docker compose down
 
 
 clean:down
