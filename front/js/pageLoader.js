@@ -65,3 +65,15 @@ export function loadPage(page, updateHistory) {
             content.innerHTML = '<h1>Page not found</h1>';
         });
 }
+
+// Sayfa yüklendiğinde URL'deki hash değerine göre sayfayı yükle
+window.onload = function() {
+    const page = getPageFromURL();
+    loadPage(page, false);
+};
+
+// URL'deki hash değeri değiştiğinde sayfayı yeniden yükle
+window.onhashchange = function() {
+    const page = getPageFromURL();
+    loadPage(page, false);
+};

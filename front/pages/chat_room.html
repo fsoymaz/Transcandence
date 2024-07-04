@@ -28,7 +28,7 @@
                     </div>
                     <div class="field">
                         <div class="control">
-                            <a class="button is-info" id="chat-message-submit">Submit</a>
+                            <button class="button is-info" id="chat-message-submit">Submit</button>
                         </div>
                     </div>
                     <small class="has-text-grey-light" id="username-display"></small>
@@ -36,5 +36,8 @@
             </div>
         </div>
     </section>
+    <script type="module">
+        import { setupChatRoom } from '../js/chat_room.js';
+    </script>
 </body>
 </html>

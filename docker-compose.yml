@@ -9,22 +9,41 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - webnet
 
   auth:
     build: ./auth
+    ports:
+      - "8001:80"
+    environment:
+      - DATABASE_URL=postgres://postgres:mysecretpassword@db:5432/postgres
+    depends_on:
+      - db
+    networks:
+      - webnet
+  
+  chat:
+    build: ./chat
     ports:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgres://postgres:mysecretpassword@db:5432/postgres
     depends_on:
       - db
+      - redis
+    networks:
+      - webnet
 
   front:
     build: ./front
     ports:
       - "3000:80"
     depends_on:
-      - db
+      - auth
+      - chat
+    networks:
+      - webnet
 
   nginx:
     build: ./nginx
@@ -35,15 +54,23 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - letsencrypt:/etc/letsencrypt
     depends_on:
-      - auth
       - front
+      - auth
+      - chat
+    networks:
+      - webnet
 
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
+    networks:
+      - webnet
 
 volumes:
   postgres_data:
   letsencrypt:
     external: true
+
+networks:
+  webnet:

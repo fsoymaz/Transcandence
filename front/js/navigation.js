@@ -24,12 +24,6 @@ export function setupNavLinks() {
         loadPage('chat', true); // This should load the general chat page
     });
 
-    document.getElementById('chat_room-link').addEventListener('click', function(event) {
-        event.preventDefault();
-        loadPage('chat_room', true);
-    });
-    
-
     document.getElementById('game-link').addEventListener('click', function(event) {
         event.preventDefault();
         if (localStorage.getItem('jwt')) {

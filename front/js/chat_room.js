@@ -1,4 +1,8 @@
+let chatSocket = null;
+
 export function setupChatRoom() {
+    console.log("Setting up chat room...");
+
     function getQueryParams() {
         const params = new URLSearchParams(window.location.search);
         return {
@@ -12,18 +16,21 @@ export function setupChatRoom() {
         objDiv.scrollTop = objDiv.scrollHeight;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const { roomName, userName } = getQueryParams();
+    const { roomName, userName } = getQueryParams();
+    console.log("Room Name:", roomName, "User Name:", userName);
 
-        if (!roomName || !userName) {
-            alert('Room name and username are required');
-            window.location.href = 'join_room.html';
-            return;
-        }
+    if (!roomName || !userName) {
+        alert('Room name and username are required');
+        window.location.href = 'join_room.html';
+        return;
+    }
 
-        document.getElementById('username-display').innerText = `Your username: ${userName}`;
+    document.getElementById('username-display').innerText = `Your username: ${userName}`;
 
-        const chatSocket = new WebSocket(`ws://${'localhost:8000'}/ws/${roomName}/`);
+    if (chatSocket && (chatSocket.readyState === WebSocket.OPEN || chatSocket.readyState === WebSocket.CONNECTING)) {
+        console.log("WebSocket is already open or connecting.");
+    } else {
+        chatSocket = new WebSocket(`wss://fsoymaz.tech/ws/${roomName}/`);
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
@@ -38,8 +45,12 @@ export function setupChatRoom() {
         chatSocket.onclose = function(e) {
             console.log('The socket closed unexpectedly');
         };
+    }
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        console.log("Submit button clicked!");
+
+        if (chatSocket.readyState === WebSocket.OPEN) {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
 
@@ -50,6 +61,10 @@ export function setupChatRoom() {
             }));
 
             messageInputDom.value = '';
-        };
-    });
+        } else {
+            alert('WebSocket connection is not open.');
+        }
+    };
 }
+
+document.addEventListener('DOMContentLoaded', setupChatRoom);
