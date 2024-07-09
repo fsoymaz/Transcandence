@@ -1,0 +1,40 @@
+import { setupNavLinks } from './navigation.js';
+
+export function verifyCode() {
+    const correctCode = "123456"; // Doğru kod (normalde bu sunucu tarafından oluşturulur ve kullanıcıya gönderilir)
+
+    document.getElementById('verifyButton').addEventListener('click', function() {
+        const userCode = document.getElementById('userCode').value;
+        const username = document.getElementById('username').value;
+        const message = document.getElementById('message');
+
+        fetch('https://43server.com/api/2fa/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                userCode: userCode,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.token) {
+                message.textContent = "Verification successful!";
+                message.style.color = "green";
+            } else {
+                message.textContent = "Invalid code. Please try again.";
+                message.style.color = "red";
+            }
+        })
+    });
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    setupNavLinks(); // Navigate links setup
+    const page = document.body.dataset.page;
+    if (page === '2fa') {
+        verifyCode(); // Call verifyCode function only for 2FA page
+    }
+});

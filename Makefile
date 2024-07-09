@@ -1,8 +1,8 @@
 up:
-	@docker compose up  --build
+	@docker-compose up -d --build
 
 down:
-	@docker compose down
+	@docker-compose down
 
 
 clean:down
@@ -11,9 +11,6 @@ clean:down
 	docker network prune -f
 
 re:clean up
-
-c_vol:
-	docker volume rm db transcandence_postgres_data
 
 
 .PHONY: all re down clean

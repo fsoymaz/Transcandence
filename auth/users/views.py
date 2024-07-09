@@ -5,13 +5,34 @@ from .serializers import UserSerializer
 from django.http import HttpResponse
 from .models import User
 import jwt, datetime
+import qrcode, pyotp, string, random
+
 
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({'message': 'User created successfully'}, status=201)
+        return Response(serializer.errors, status=400)
+    
+class TwoFactorActive(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        _bool = request.data.get('twofactoractive')
+
+        if _bool is None:
+            return Response({'error': 'Please provide the twofactoractive status'}, status=400)
+
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            raise AuthenticationFailed("User not found!")
+
+        user.twofactoractive = bool(_bool)
+        user.save()
+
+        return Response({'message': 'User updated successfully'}, status=200)
+
 
 class LoginView(APIView):
     def post(self, request):
@@ -32,17 +53,47 @@ class LoginView(APIView):
         payload = {
             'id': user.id,
             'email': user.email,
+			'username': user.username,
+            'twofactoractive': user.twofactoractive,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1),
             'iat': datetime.datetime.utcnow()
         }
 
         token = jwt.encode(payload, 'secret', algorithm='HS256')
         response = Response()
-        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.set_cookie(key='jwt', value=token, httponly=False)
         response.data = {
             'token': token
         }
         return response
+    
+class TwoFactor(APIView):
+    def post(self, request):
+        userCode = request.data.get('userCode')
+        username = request.data.get('username')
+        user = User.objects.filter(username=username).first()
+
+        if user is None:
+            raise AuthenticationFailed("User not found!")
+
+        totp = pyotp.TOTP(user.twofactorkey)
+        if totp.verify(userCode):
+            payload = {
+                'id': user.id,
+                'email': user.email,
+                'username': user.username,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1),
+                'iat': datetime.datetime.utcnow()
+            }
+            token = jwt.encode(payload, 'secret', algorithm='HS256')
+            response = Response()
+            response.set_cookie(key='jwt', value=token, httponly=True)
+            response.data = {
+                'token': token
+            }
+            return response
+        else:
+            return Response({'error': 'Invalid TOTP code'}, status=400)
 
 class UserView(APIView):
     def get(self, request):

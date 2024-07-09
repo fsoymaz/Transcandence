@@ -30,16 +30,15 @@ export function setupChatRoom() {
     if (chatSocket && (chatSocket.readyState === WebSocket.OPEN || chatSocket.readyState === WebSocket.CONNECTING)) {
         console.log("WebSocket is already open or connecting.");
     } else {
-        chatSocket = new WebSocket(`wss://fsoymaz.tech/ws/${roomName}/`);
+        chatSocket = new WebSocket(`wss://43server.com/ws/${roomName}/`);
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             if (data.message) {
                 document.querySelector('#chat-messages').innerHTML += `<b>${data.username}</b>: ${data.message}<br>`;
                 scrollToBottom();
-            } else {
-                alert('The message is empty!');
             }
+            
         };
 
         chatSocket.onclose = function(e) {
@@ -47,7 +46,7 @@ export function setupChatRoom() {
         };
     }
 
-    document.querySelector('#chat-message-submit').onclick = function(e) {
+    function sendMessage() {
         console.log("Submit button clicked!");
 
         if (chatSocket.readyState === WebSocket.OPEN) {
@@ -64,7 +63,15 @@ export function setupChatRoom() {
         } else {
             alert('WebSocket connection is not open.');
         }
-    };
+    }
+
+    document.querySelector('#chat-message-submit').onclick = sendMessage;
+
+    document.querySelector('#chat-message-input').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', setupChatRoom);

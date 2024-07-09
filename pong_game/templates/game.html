@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ping Pong Game</title>
+    <script type="module" src="{% static 'game.js' %}"></script>
+</head>
+
+<body>
+    <section>
+        <h2>Ping Pong Game</h2>
+        <div id="room-actions">
+            <form id="create-room-form">
+                <label for="create-room-name">Create Room with Password:</label>
+                <input type="text" id="create-room-name" name="create_room_name" required>
+                <button type="submit">Create Room</button>
+            </form>
+            <form id="join-room-form">
+                <label for="join-room-name">Join Room with Password:</label>
+                <input type="text" id="join-room-name" name="join_room_name" required>
+                <button type="submit">Join Room</button>
+            </form>
+        </div>
+        <canvas id="gameCanvas" class="canvas" width="800" height="500" style="border:1px solid #d3cccc; display:none;"></canvas>
+    </section>
+</body>
+
+</html>

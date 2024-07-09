@@ -1,19 +1,27 @@
 import { setupChatRoom } from './chat_room.js';
+import { parseJWT } from './auth.js';
 
-export function setupChat() {
+export function setupChat() {    
+    const jwt = localStorage.getItem('jwt');    
+    if (!jwt) {
+        console.error('JWT not found');
+        return;
+    }
+    const decoded = parseJWT(jwt);
+    const username = decoded.username;
+
     document.querySelector('#room-name-input').focus();
-    document.querySelector('#room-name-submit').onclick = function(e) {
+    
+    function joinRoom() {
         var roomName = document.querySelector('#room-name-input').value;
-        var userName = document.querySelector('#username-input').value;
-        console.log("room + user" + roomName, userName);
 
-        if (!roomName || !userName) {
-            alert('Room name and username are required');
+        if (!roomName) {
+            alert('Room name is required');
             return;
         }
-
         // URL'yi değiştir
-        history.pushState({}, '', `chat_room?room_name=${encodeURIComponent(roomName)}&username=${encodeURIComponent(userName)}`);
+        history.pushState({}, '', `chat_room?room_name=${encodeURIComponent(roomName)}&username=${encodeURIComponent(username)}`);
+
 
         // İçeriği değiştir ve dinamik içeriği ayarla
         fetch('../pages/chat_room.html')
@@ -22,17 +30,23 @@ export function setupChat() {
                 document.body.innerHTML = data;
                 setupChatRoom(); // Dinamik içeriği ayarla
             });
-    };
+    }
 
-    // Sayfa yüklendiğinde URL'deki bilgileri kullanarak sohbet odasını ve kullanıcı adını ayarla
+    document.querySelector('#room-name-submit').onclick = joinRoom;
+
+    document.querySelector('#room-name-input').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            joinRoom();
+        }
+    });
+
+    // Sayfa yüklendiğinde URL'deki bilgileri kullanarak sohbet odasını ayarla
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const roomName = urlParams.get('room_name');
-        const userName = urlParams.get('username');
 
-        if (roomName && userName) {
+        if (roomName) {
             document.querySelector('#room-name-input').value = decodeURIComponent(roomName);
-            document.querySelector('#username-input').value = decodeURIComponent(userName);
         }
     };
 }

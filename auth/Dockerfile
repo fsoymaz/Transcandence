@@ -11,8 +11,8 @@ WORKDIR /code
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
 RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy project files
 COPY . .
@@ -23,7 +23,7 @@ RUN chmod +x /start.sh
 
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8001
 
 # Start the Django server using the custom script
 CMD ["/start.sh"]

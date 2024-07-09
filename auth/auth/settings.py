@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os.path
+import sys
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-htby_zs#54+71jh@b*#6sc(kz$os#lwi+b9k^*ub^sd^liw#no
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['161.35.68.123', 'fsoymaz.tech', '*']
+ALLOWED_HOSTS = ['134.209.252.117', '43server.com', '*']
 
 
 # Application definition
@@ -78,13 +79,24 @@ ASGI_APPLICATION = 'auth.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'postgres',
+#        'USER': 'postgres',
+#        'PASSWORD': 'mysecretpassword',
+#        'HOST': '192.168.32.2',  # Docker Compose'da tanımlanan servis adı
+#        'PORT': '5432',
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'auth_db',
         'USER': 'postgres',
         'PASSWORD': 'mysecretpassword',
-        'HOST': 'db',  # Docker Compose'da tanımlanan servis adı
+        'HOST': 'auth_db',
         'PORT': '5432',
     }
 }
@@ -125,7 +137,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+PROJECT_ROOT = os.path.normpath(os.path.dirname(__file__))
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 STATIC_URL = '/static/'
+
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",
+#     "/var/www/static/",
+# ]
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
@@ -139,7 +158,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = [
-    'https://fsoymaz.tech',
+    'https://43server.com',
     # Başka güvenilir kaynaklar buraya eklenebilir.
 ]
 
